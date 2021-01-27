@@ -9,7 +9,9 @@ import DashboardScreen from './DrawerScreens/screens/DashboardScreen'
 import HelpSupportScreen from './DrawerScreens/screens/HelpSupportScreen';
 import MyAccountScreen from './DrawerScreens/screens/MyAccountScreen';
 import CategoriesScreen from './DrawerScreens/screens/CategoriesScreen';
-import TermsConditionScreen from './DrawerScreens/screens/TermsConditionScreen';
+import SubCategoriesScreen from './DrawerScreens/screens/SubCategoriesScreen';
+
+// Import Stack Screens
 
 import CustomSidebarMenu from '../components/CustomSidebarMenu';
 import NavigationDrawerHeader from '../components/NavigationDrawerHeader';
@@ -89,14 +91,14 @@ const myAccountScreenStack = ({ navigation }) => {
 	);
 };
 
-const termsConditionScreenStack = ({ navigation }) => {
+const subCategoriesScreenStack = ({ navigation }) => {
 	return (
-		<Stack.Navigator initialRouteName="TermsConditionScreen">
+		<Stack.Navigator initialRouteName="SubCategoriesScreen">
 			<Stack.Screen
-				name="TermsConditionScreen"
-				component={TermsConditionScreen}
+				name="SubCategoriesScreen"
+				component={SubCategoriesScreen}
 				options={{
-					title: 'Terms And Conditions', //Set Header Title
+					title: 'Sub Categories', //Set Header Title
 					headerLeft: () => (
 						<NavigationDrawerHeader navigationProps={navigation} />
 					),
@@ -149,7 +151,7 @@ const DrawerNavigatorRoutes = (props) => {
 				},
 				backgroundColor: 'red'
 			}}
-			initialRouteName="categoriesScreenStack"
+			initialRouteName="subCategoriesScreenStack"
 			screenOptions={{headerShown: false}}
 			drawerContent={CustomSidebarMenu}
 		>
@@ -169,9 +171,9 @@ const DrawerNavigatorRoutes = (props) => {
 				component={helpSupportScreenStack}
 			/>
 			<Drawer.Screen
-				name="termsConditionScreenStack"
-				options={{drawerLabel: 'Terms And Conditions'}}
-				component={termsConditionScreenStack}
+				name="subCategoriesScreenStack"
+				options={{drawerLabel: 'Sub-Categories'}}
+				component={subCategoriesScreenStack}
 			/>
 			<Drawer.Screen
 				name="categoriesScreenStack"
