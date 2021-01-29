@@ -12,6 +12,8 @@ import CategoriesScreen from './DrawerScreens/screens/CategoriesScreen';
 import SubCategoriesScreen from './DrawerScreens/screens/SubCategoriesScreen';
 
 // Import Stack Screens
+import AddCategoryScreen from './DrawerScreens/screens/AddCategoryScreen';
+import AddSubCategoryScreen from './DrawerScreens/screens/AddSubCategoryScreen';
 
 import CustomSidebarMenu from '../components/CustomSidebarMenu';
 import NavigationDrawerHeader from '../components/NavigationDrawerHeader';
@@ -27,30 +29,6 @@ const dashboardScreenStack = ({ navigation }) => {
 				component={DashboardScreen}
 				options={{
 					title: 'Dashboard', //Set Header Title
-					headerLeft: () => (
-						<NavigationDrawerHeader navigationProps={navigation} />
-					),
-					headerStyle: {
-						backgroundColor: '#307ecc', //Set Header color
-					},
-					headerTintColor: '#fff', //Set Header text color
-					headerTitleStyle: {
-						fontWeight: 'bold', //Set Header text style
-					},
-				}}
-			/>
-		</Stack.Navigator>
-	);
-};
-
-const helpSupportScreenStack = ({ navigation }) => {
-	return (
-		<Stack.Navigator initialRouteName="HelpSupportScreen">
-			<Stack.Screen
-				name="HelpSupportScreen"
-				component={HelpSupportScreen}
-				options={{
-					title: 'Help And Support', //Set Header Title
 					headerLeft: () => (
 						<NavigationDrawerHeader navigationProps={navigation} />
 					),
@@ -91,6 +69,44 @@ const myAccountScreenStack = ({ navigation }) => {
 	);
 };
 
+const categoriesScreenStack = ({ navigation }) => {
+	return (
+		<Stack.Navigator initialRouteName="CategoriesScreen" >
+			<Stack.Screen
+				name="CategoriesScreen"
+				component={CategoriesScreen}
+				options={{
+					title: 'Categories', //Set Header Title
+					headerLeft: () => (
+						<NavigationDrawerHeader navigationProps={navigation} />
+					),
+					headerStyle: {
+						backgroundColor: '#307ecc', //Set Header color
+					},
+					headerTintColor: '#fff', //Set Header text color
+					headerTitleStyle: {
+						fontWeight: 'bold', //Set Header text style
+					},
+				}}
+			/>
+			<Stack.Screen 
+				name="addCategoryScreen"
+				component={AddCategoryScreen}
+				options={{
+					title: 'Add New Category', //Set Header Title
+					headerStyle: {
+						backgroundColor: '#307ecc', //Set Header color
+					},
+					headerTintColor: '#fff', //Set Header text color
+					headerTitleStyle: {
+						fontWeight: 'bold', //Set Header text style
+					},
+				}}
+			/>
+		</Stack.Navigator>
+	);
+};
+
 const subCategoriesScreenStack = ({ navigation }) => {
 	return (
 		<Stack.Navigator initialRouteName="SubCategoriesScreen">
@@ -111,18 +127,32 @@ const subCategoriesScreenStack = ({ navigation }) => {
 					},
 				}}
 			/>
+			<Stack.Screen 
+				name="addSubCategoryScreen"
+				component={AddSubCategoryScreen}
+				options={{
+					title: 'Add New Sub Category', //Set Header Title
+					headerStyle: {
+						backgroundColor: '#307ecc', //Set Header color
+					},
+					headerTintColor: '#fff', //Set Header text color
+					headerTitleStyle: {
+						fontWeight: 'bold', //Set Header text style
+					},
+				}}
+			/>
 		</Stack.Navigator>
 	);
 };
 
-const categoriesScreenStack = ({ navigation }) => {
+const helpSupportScreenStack = ({ navigation }) => {
 	return (
-		<Stack.Navigator initialRouteName="CategoriesScreen" >
+		<Stack.Navigator initialRouteName="HelpSupportScreen">
 			<Stack.Screen
-				name="CategoriesScreen"
-				component={CategoriesScreen}
+				name="HelpSupportScreen"
+				component={HelpSupportScreen}
 				options={{
-					title: 'Categories', //Set Header Title
+					title: 'Help And Support', //Set Header Title
 					headerLeft: () => (
 						<NavigationDrawerHeader navigationProps={navigation} />
 					),
@@ -151,34 +181,34 @@ const DrawerNavigatorRoutes = (props) => {
 				},
 				backgroundColor: 'red'
 			}}
-			initialRouteName="subCategoriesScreenStack"
+			initialRouteName="dashboardScreenStack"
 			screenOptions={{headerShown: false}}
 			drawerContent={CustomSidebarMenu}
 		>
-			<Drawer.Screen
+			<Stack.Screen
 				name="dashboardScreenStack"
 				options={{ drawerLabel: 'Dashboard' }}
 				component={dashboardScreenStack}
 			/>
-			<Drawer.Screen
+			<Stack.Screen
 				name="myAccountScreenStack"
 				options={{drawerLabel: 'My Account'}}
 				component={myAccountScreenStack}
 			/>
-			<Drawer.Screen
-				name="helpSupportScreenStack"
-				options={{drawerLabel: 'Help And Support'}}
-				component={helpSupportScreenStack}
+			<Stack.Screen
+				name="categoriesScreenStack"
+				options={{drawerLabel: 'Categories'}}
+				component={categoriesScreenStack}
 			/>
-			<Drawer.Screen
+			<Stack.Screen
 				name="subCategoriesScreenStack"
 				options={{drawerLabel: 'Sub-Categories'}}
 				component={subCategoriesScreenStack}
 			/>
-			<Drawer.Screen
-				name="categoriesScreenStack"
-				options={{drawerLabel: 'Categories'}}
-				component={categoriesScreenStack}
+			<Stack.Screen
+				name="helpSupportScreenStack"
+				options={{drawerLabel: 'Help And Support'}}
+				component={helpSupportScreenStack}
 			/>
 		</Drawer.Navigator>
 	);

@@ -1,8 +1,22 @@
 import React from 'react';
-import { View, LogBox, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import { View, LogBox, Text, StyleSheet, SafeAreaView, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
 import { Chip } from 'react-native-paper';
+import { openDatabase } from 'react-native-sqlite-storage';
 
 import renderSubCategory from '../components/renderSubCategory';
+
+const db = openDatabase({ 
+	name: 'SQLite.db', 
+	location: 'default', 
+	createFromLocation: '~SQLite.db' 
+	},
+	() => { 
+		console.log('Sub-Category DB Opened Successfully') 
+	},
+	error => {
+		console.log("Sub-Category DB ERROR: ");
+	}
+);
 
 const data = [  
 	{
@@ -126,7 +140,65 @@ const dataSource = [
 LogBox.ignoreLogs(['`flexWrap: `wrap`` is not supported'])
 
 export default class SubCategoriesScreen extends React.Component {
+
+	constructor(props) {
+		super(props);
+		this.getSubCategory = this.getSubCategory.bind(this);
+		this.state = {
+			navigation: props.navigation,
+			allCategories: [],
+			allSubCategoriesData: [],
+			isLoading: true
+		}
+	}
+
+	ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
+		db.transaction((trans) => {
+			trans.executeSql(sql, params, (trans, results) => {
+				resolve(results);
+			},
+			(error) => {
+				reject(error);
+			});
+		});
+	});
+
+	async componentDidMount() {
+
+		let create = await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS subcategory (subCategoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryTitle TEXT NOT NULL)", [])
+
+		this.getSubCategory()
+
+		this.getCategory()
+	}
+
+	async getSubCategory () {
+		let tempvar = []
+		this.setState({ allSubCategoriesData: tempvar, isLoading: true })
+
+		let selectQuery = await this.ExecuteQuery("SELECT * FROM subcategory", [])
+		var temp = [];
+		for (let i = 0; i < selectQuery.rows.length; ++i){
+			temp.push(selectQuery.rows.item(i));
+		}
+		this.setState({ allSubCategoriesData: temp, isLoading: false })
+
+		this.getCategory();
+	}
+
+	async getCategory () {
+
+		let selectQuery = await this.ExecuteQuery("SELECT * FROM category", []);
+		var temp = [];
+		for (let i = 0; i < selectQuery.rows.length; ++i){
+			temp.push(selectQuery.rows.item(i));
+		}
+		this.setState({ allCategories: temp})
+	}
+
 	render() {
+		const { navigation } = this.state;
+
 		return (
 			<SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
 				<View style={{ flex: 1 }} >
@@ -134,7 +206,7 @@ export default class SubCategoriesScreen extends React.Component {
 					{/* ADD NEW CATEGORY */}
 					<View style={{ alignItems: 'center', marginRight: 10, marginVertical: 10 }}>
 						<TouchableOpacity 
-							onPress={() => alert('Add New Sub Category')}
+							onPress={() => navigation.navigate('addSubCategoryScreen')}
 							style={{ paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10, backgroundColor: 'lightblue', elevation: 15 }} >
 							<Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>
 								Add New
@@ -148,56 +220,48 @@ export default class SubCategoriesScreen extends React.Component {
 							Categories
 						</Text>
 
-						<View>
+						<View style={{ flexWrap: 'wrap' }} >
 							<FlatList 
 								contentContainerStyle={{ flexDirection : "row", flexWrap : "wrap" }}
-								data={dataSource}
-								keyExtractor={(item) => item.id}
+								data={this.state.allCategories}
+								keyExtractor={(item) => item.categoryID.toString()}
 								renderItem={({ item }) => 
 									<View style={{ margin: 5 }}>
 										<Chip
 											mode="outlined" //changing display mode, default is flat.
 											height={30} //give desirable height to chip
-											textStyle={{ color:'#000',fontSize: 15 }} //label properties
-											onPress={() => alert('Clicked Chip'+ item.name)}
+											textStyle={{ fontSize: 15 }} //label properties
+											onPress={() => alert('Clicked Chip'+ item.categoryTitle)}
 										>
-											{item.name}
+											{item.categoryTitle}
 										</Chip>
 									</View>
 								}
 							/>
-							{/* {
-								dataSource.map((item, index) => {
-									return (
-										<View style={{ margin: 5 }}>
-											<Chip
-												key={index}
-												mode="outlined" //changing display mode, default is flat.
-												height={30} //give desirable height to chip
-												textStyle={{ color:'#000',fontSize: 15 }} //label properties
-												style={{ }} //display diff color BG
-												onPress={() => Alert.alert('Clicked Chip'+ item)}
-											>
-												{item.name}
-											</Chip>
-										</View>
-									);
-								})
-							} */}
 						</View>
 
 					</View>
 					
 					<View>
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Sub Categories</Text>
-						<FlatList 
-							data={data}
-							keyExtractor={(item) => item.subCategoryID.toString()}
-							renderItem={renderSubCategory}
-							ItemSeparatorComponent={() => 
-								<View style={{ marginVertical: 5 }}  />
-							}
-						/>
+						{ !this.state.isLoading ? 
+							<FlatList 
+								data={this.state.allSubCategoriesData}
+								keyExtractor={(item) => item.subCategoryID.toString()}
+								renderItem={renderSubCategory}
+								ItemSeparatorComponent={() => 
+									<View style={{ marginVertical: 5 }}  />
+								}
+								refreshControl={
+									<RefreshControl
+										refreshing={this.state.isLoading}
+										onRefresh={this.getSubCategory}
+									/>
+								}
+							/>
+							:
+							<Text>No Sub Categories</Text>
+						}
 					</View>
 
 				</View>
