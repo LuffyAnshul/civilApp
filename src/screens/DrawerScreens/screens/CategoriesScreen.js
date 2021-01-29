@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, RefreshControl, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, RefreshControl, TouchableOpacity, FlatList } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 
 import renderCategory from '../components/renderCategory';
@@ -16,69 +16,6 @@ const db = openDatabase({
 		console.log("Category DB ERROR: ");
 	}
 );
-
-const data = [  
-	{
-		"categoryID": 1,
-		"categoryTitle": 'Cable',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 2,
-		"categoryTitle": 'Tray',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 3,
-		"categoryTitle": 'uPVC',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 4,
-		"categoryTitle": 'Cable',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 5,
-		"categoryTitle": 'Tray',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 6,
-		"categoryTitle": 'uPVC',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 7,
-		"categoryTitle": 'Cable',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 8,
-		"categoryTitle": 'Tray',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 9,
-		"categoryTitle": 'uPVC',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 10,
-		"categoryTitle": 'Cable',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 12,
-		"categoryTitle": 'Tray',
-		"categoryDescription": 'Short Description on Cable'
-	},
-	{
-		"categoryID": 13,
-		"categoryTitle": 'uPVC',
-		"categoryDescription": 'Short Description on Cable'
-	}
-]
 
 export default class CategoriesScreen extends React.Component {
 
@@ -144,7 +81,7 @@ export default class CategoriesScreen extends React.Component {
 					<View style={{ flex: 1, marginTop: 30 }} >
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Categories</Text>
 						{
-							!this.state.isLoading ? 
+							!this.state.isLoading && this.state.allCategoriesData.length ? 
 							<FlatList 
 								data={this.state.allCategoriesData}
 								keyExtractor={(item) => item.categoryID.toString()}
@@ -160,7 +97,12 @@ export default class CategoriesScreen extends React.Component {
 								}
 							/> 
 							: 
-							<Text>No Categories</Text>
+							<View style={{ alignItems: 'center' }} >
+								<Text style={{ marginVertical: 10, fontWeight: 'bold', fontSize: 20 }} >"No Categories"</Text>
+								<TouchableOpacity onPress={this.getData} style={{ backgroundColor: 'cyan', borderRadius: 15 }} >
+									<Text style={{ margin: 20, fontSize: 20 }} >Refresh</Text>
+								</TouchableOpacity>
+							</View>
 						}
 					</View>
 

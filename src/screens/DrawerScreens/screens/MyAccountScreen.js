@@ -27,6 +27,8 @@ export default class MyAccountScreen extends React.Component {
 			.then((value) => this.setState({ userMobile: value }));
 		await AsyncStorage.getItem('userImage')
 			.then((value) => this.setState({ userImage: value }));
+
+		console.log(this.state.userImage)
 	}
 
 	render() {
@@ -34,7 +36,7 @@ export default class MyAccountScreen extends React.Component {
 			<SafeAreaView >
 				<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ marginHorizontal: 10 }} >
 					<View style={styles.containerStyles}>
-						{ this.state.userImage === '' ?
+						{ this.state.userImage === '' || this.state.userImage === null  ?
 							<Image 
 								source={require('../../../assets/profile_defaults.png')} 
 								style={{ height: 70, width: 70 }}
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
 	containerStyles: {
 		flex: 1, 
 		alignItems: 'center', 
-		marginVertical: 20
+		marginTop: 20
 	},
 	detailsStyle: { 
 		fontWeight: 'bold', 

@@ -54,7 +54,6 @@ export default class RegisterScreen extends Component {
 					if (password === confirmPassword) {
 						this.setState({ passwordError: false, confirmPasswordError: false })
 						
-						alert(name + ", " + email + ", " + password + ", " + mobile + ", " + bdate );
 						await AsyncStorage.setItem('userName', name)
 						await AsyncStorage.setItem('userEmail', email)
 						await AsyncStorage.setItem('userPassword', password)

@@ -16,7 +16,7 @@ const CustomSidebarMenu = (props) => {
 			<View style={stylesSidebar.profileHeader}>
 				<Image source={require('../assets/logo.png')} style={{ height: 100, width: 100 }} />
 				<Text style={{ justifyContent: 'center', alignItems: 'center', fontSize: 17, fontWeight: 'bold' }}>
-					DocBoyz
+					Civil App
 				</Text>
 			</View>
 

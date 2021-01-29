@@ -165,11 +165,9 @@ export default class SubCategoriesScreen extends React.Component {
 
 	async componentDidMount() {
 
-		let create = await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS subcategory (subCategoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryTitle TEXT NOT NULL)", [])
+		let create = await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS subcategory (subCategoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryTitle TEXT NOT NULL, CONSTRAINT categoryID FOREIGN KEY (categoryID) REFERENCES category (categoryID) ON DELETE CASCADE ON UPDATE CASCADE)", [])
 
 		this.getSubCategory()
-
-		this.getCategory()
 	}
 
 	async getSubCategory () {
@@ -244,7 +242,7 @@ export default class SubCategoriesScreen extends React.Component {
 					
 					<View>
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Sub Categories</Text>
-						{ !this.state.isLoading ? 
+						{ !this.state.isLoading && this.state.allSubCategoriesData.length ? 
 							<FlatList 
 								data={this.state.allSubCategoriesData}
 								keyExtractor={(item) => item.subCategoryID.toString()}
@@ -260,7 +258,12 @@ export default class SubCategoriesScreen extends React.Component {
 								}
 							/>
 							:
-							<Text>No Sub Categories</Text>
+							<View style={{ alignItems: 'center' }} >
+								<Text style={{ marginVertical: 10, fontWeight: 'bold', fontSize: 20 }} >"No Sub Categories"</Text>
+								<TouchableOpacity onPress={this.getSubCategory} style={{ backgroundColor: 'cyan', borderRadius: 15 }} >
+									<Text style={{ margin: 20, fontSize: 20 }} >Refresh</Text>
+								</TouchableOpacity>
+							</View>
 						}
 					</View>
 
