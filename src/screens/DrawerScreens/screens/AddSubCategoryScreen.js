@@ -4,18 +4,7 @@ import { TextInput } from 'react-native-paper';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import { openDatabase } from 'react-native-sqlite-storage';
 
-const db = openDatabase({ 
-	name: 'SQLite.db', 
-	location: 'default', 
-	createFromLocation: '~SQLite.db' 
-	},
-	() => { 
-		console.log('Add Sub Category DB Opened Successfully') 
-	},
-	error => {
-		console.log("Add Sub Category ERROR: ");
-	}
-);
+const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
 export default class AddCategoryScreen extends React.Component {
 
@@ -125,7 +114,7 @@ export default class AddCategoryScreen extends React.Component {
 						/>
 						<View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: 6, marginTop: 10 }} >
 							<Text style={{ fontSize: 16, fontWeight: 'bold' }} >Selected Category: </Text>
-							<Text style={{ fontSize: 16 }} >{this.state.selectedCategory === '' ? 'Nothing Selected' : this.state.selectedCategory}</Text>
+							<Text style={{ fontSize: 16, textDecorationLine: 'underline' }} >{this.state.selectedCategory === '' ? 'Nothing Selected' : this.state.selectedCategory}</Text>
 						</View>
 					</View>
 

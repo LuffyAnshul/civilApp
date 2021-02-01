@@ -3,20 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, Alert, TouchableHig
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { openDatabase } from 'react-native-sqlite-storage';
 
-const db = openDatabase({ 
-	name: 'SQLite.db', 
-	location: 'default', 
-	createFromLocation: '~SQLite.db' 
-	},
-	() => { 
-		console.log('Delete Category DB Opened Successfully') 
-	},
-	error => {
-		console.log("DELETE Category DB ERROR: ");
-	}
-);
+const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
-const renderSubCategory = ({ item }) => {
+const renderSubCategory = (item, navigation) => {
 
 	const ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
 		db.transaction((trans) => {
@@ -80,7 +69,7 @@ const renderSubCategory = ({ item }) => {
 	return (
 		<View style={styles.subCategoryStyles} >
 			<Swipeable renderRightActions={RightActions} >
-				<TouchableHighlight>
+				<TouchableHighlight onPress={() => navigation.navigate('productsScreen', { categoryID: item.categoryID, screen: "subcategory" })} >
 					<View style={{ padding: 10 }} >
 						<Text style={{ fontSize: 15, fontWeight: 'bold', color: '#fff' }} >
 							{item.subCategoryTitle}

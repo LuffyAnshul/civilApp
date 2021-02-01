@@ -5,18 +5,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 import renderSubCategory from '../components/renderSubCategory';
 
-const db = openDatabase({ 
-	name: 'SQLite.db', 
-	location: 'default', 
-	createFromLocation: '~SQLite.db' 
-	},
-	() => { 
-		console.log('Sub-Category DB Opened Successfully') 
-	},
-	error => {
-		console.log("Sub-Category DB ERROR: ");
-	}
-);
+const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
 const data = [  
 	{
@@ -175,6 +164,10 @@ export default class SubCategoriesScreen extends React.Component {
 		this.setState({ allSubCategoriesData: tempvar, isLoading: true })
 
 		let selectQuery = await this.ExecuteQuery("SELECT * FROM subcategory", [])
+
+		if ( selectQuery.rows.length === 0 ) {
+			return alert('No Sub Category Exist')
+		}	
 		var temp = [];
 		for (let i = 0; i < selectQuery.rows.length; ++i){
 			temp.push(selectQuery.rows.item(i));
@@ -212,6 +205,7 @@ export default class SubCategoriesScreen extends React.Component {
 						</TouchableOpacity>
 					</View>
 
+					{/* Chips */}
 					<View>
 
 						<Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }} >
@@ -240,13 +234,14 @@ export default class SubCategoriesScreen extends React.Component {
 
 					</View>
 					
+					{/* Sub Category FlatList */}
 					<View>
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Sub Categories</Text>
 						{ !this.state.isLoading && this.state.allSubCategoriesData.length ? 
 							<FlatList 
 								data={this.state.allSubCategoriesData}
 								keyExtractor={(item) => item.subCategoryID.toString()}
-								renderItem={renderSubCategory}
+								renderItem={({ item }) => renderSubCategory(item, navigation)}
 								ItemSeparatorComponent={() => 
 									<View style={{ marginVertical: 5 }}  />
 								}

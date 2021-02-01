@@ -48,7 +48,7 @@ export default class LoginScreen extends Component {
 				AsyncStorage.setItem('isAuth', 'true')
 
 				if (this.state.actualEmail === this.state.userEmail && this.state.actualPassword === this.state.userPassword ) {
-					return this.state.navigation.replace('DrawerNavigationRoutes');
+					return this.state.navigation.replace('MaterialBottomNavigation');
 				} else {
 					this.setState({ userEmail: '', userPassword: '', errorText: 'User not Registered' });
 					return alert(this.state.errorText);

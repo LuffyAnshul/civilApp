@@ -3,18 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } fr
 import { TextInput } from 'react-native-paper';
 import { openDatabase } from 'react-native-sqlite-storage';
 
-const db = openDatabase({ 
-	name: 'SQLite.db', 
-	location: 'default', 
-	createFromLocation: '~SQLite.db' 
-	},
-	() => { 
-		console.log('Add Category DB Opened Successfully') 
-	},
-	() => {
-		console.log("Add Category DB ERROR: ");
-	}
-);
+const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
 export default class AddCategoryScreen extends React.Component {
 

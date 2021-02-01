@@ -62,7 +62,7 @@ export default class RegisterScreen extends Component {
 						await AsyncStorage.setItem('userImage', imageURI);
 						await AsyncStorage.setItem('isAuth', 'true')
 						
-						return this.state.navigation.replace('DrawerNavigationRoutes');
+						return this.state.navigation.replace('MaterialBottomNavigation');
 					}
 				}
 				this.setState({ password: '', confirmPassword: '', passwordError: true, confirmPasswordError: true })

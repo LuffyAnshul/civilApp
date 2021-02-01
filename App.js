@@ -8,7 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from './src/screens/SplashScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
-import DrawerNavigationRoutes from './src/screens/DrawerNavigationRoutes';
+import MaterialBottomNavigation from './src/screens/MaterialBottomNavigation';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -60,8 +60,8 @@ export default class App extends React.Component {
 						options={{headerShown: false}}
 					/>
 					<Stack.Screen
-						name="DrawerNavigationRoutes"
-						component={DrawerNavigationRoutes}
+						name="MaterialBottomNavigation"
+						component={MaterialBottomNavigation}
 						options={{headerShown: false}}
 					/>
 				</Stack.Navigator>

@@ -20,7 +20,7 @@ const SplashScreen = ({ navigation }) => {
 			//else send to Home Screen
 			AsyncStorage.getItem('isAuth').then((value) => {
 				navigation.replace(
-					value === null || value === 'false' ? 'Auth' : 'DrawerNavigationRoutes'
+					value === null || value === 'false' ? 'Auth' : 'MaterialBottomNavigation'
 				)
 			});
 		}, 500);

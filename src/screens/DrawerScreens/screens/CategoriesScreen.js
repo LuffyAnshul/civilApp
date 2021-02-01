@@ -4,18 +4,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 import renderCategory from '../components/renderCategory';
 
-const db = openDatabase({ 
-	name: 'SQLite.db', 
-	location: 'default', 
-	createFromLocation: '~SQLite.db' 
-	},
-	() => { 
-		console.log('Category DB Opened Successfully') 
-	},
-	error => {
-		console.log("Category DB ERROR: ");
-	}
-);
+const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
 export default class CategoriesScreen extends React.Component {
 
@@ -78,6 +67,7 @@ export default class CategoriesScreen extends React.Component {
 						</TouchableOpacity>
 					</View>
 
+					{/* Category FlatList */}
 					<View style={{ flex: 1, marginTop: 30 }} >
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Categories</Text>
 						{
@@ -85,7 +75,7 @@ export default class CategoriesScreen extends React.Component {
 							<FlatList 
 								data={this.state.allCategoriesData}
 								keyExtractor={(item) => item.categoryID.toString()}
-								renderItem={renderCategory}
+								renderItem={({ item }) => renderCategory(item, navigation)}
 								ItemSeparatorComponent={() => 
 									<View style={{ marginVertical: 5 }}  />
 								}
