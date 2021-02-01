@@ -10,13 +10,16 @@ export default class AddCategoryScreen extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.subCategoryTitle = React.createRef();
+		this.productTitle = React.createRef();
 		this.state = {
 			navigation: props.navigation,
 			allCategoriesData: 0,
-			subCategoryTitle: '',
-			selectedId: 0,
-			selectedCategory: ''
+			allSubCategoriesData: 0,
+			productTitle: '',
+			selectedCategoryId: 0,
+			selectedCategory: '',
+			selectedSubCategoryId: 0,
+			selectedSubCategory: ''
 		}
 	}
 
@@ -46,7 +49,21 @@ export default class AddCategoryScreen extends React.Component {
 
 	}
 
-	async uploadSubCategoryToDB (){
+	async getSubCategory (selectedCategoryId) {
+		let selectQuery = await this.ExecuteQuery("SELECT * FROM subCategory WHERE categoryID = ?", [selectedCategoryId])
+
+		var temp = [];
+		for (let i = 0; i < selectQuery.rows.length; ++i){
+			let arr = {
+				"id": selectQuery.rows.item(i).subCategoryID,
+				"name": selectQuery.rows.item(i).subCategoryTitle
+			}
+			temp.push(arr);
+		}
+		this.setState({ allSubCategoriesData: temp });
+	}
+
+	async uploadProductToDB (){
 
 		const { selectedId, subCategoryTitle } = this.state;
 
@@ -74,6 +91,9 @@ export default class AddCategoryScreen extends React.Component {
 	}
 
 	render() {
+
+		let { selectedCategoryId } = this.state;
+
 		return (
 			<SafeAreaView style={{flex: 1}}>
 				<View 
@@ -83,7 +103,8 @@ export default class AddCategoryScreen extends React.Component {
 					<View style={styles.details} >
 						<SearchableDropdown
 							onItemSelect={(item) => {
-								this.setState({ selectedId: item.id, selectedCategory: item.name })
+								this.setState({ selectedCategoryId: item.id, selectedCategory: item.name });
+								this.getSubCategory(item.id)
 							}}
 							containerStyle={{
 								padding: 1
@@ -118,23 +139,63 @@ export default class AddCategoryScreen extends React.Component {
 						</View>
 					</View>
 
-					{/* Sub Category Title */}
+					{/* Select Sub- Category */}
+					<View style={styles.details} pointerEvents={ selectedCategoryId ===0 ? 'none' : 'auto' } >
+						<SearchableDropdown
+							onItemSelect={(item) => {
+								this.setState({ selectedSubCategoryId: item.id, selectedSubCategory: item.name })
+							}}
+							containerStyle={{
+								padding: 1
+							}}
+							textInputStyle={{
+								padding: 12,
+								borderWidth: 1,
+								borderColor: '#ccc',
+								backgroundColor: '#FAF7F6',
+							}}
+							itemStyle={{
+								padding: 10,
+								marginVertical: 1,
+								borderColor: '#000',
+								borderRadius: 5, 
+								borderWidth: 1,
+							}}
+							itemTextStyle={{
+								color: '#000',
+							}}
+							itemsContainerStyle={{
+								maxHeight: 100,
+							}}
+							items={this.state.allSubCategoriesData}
+							resetValue={false}
+							placeholder='Select Category'
+							underlineColorAndroid="transparent"
+						/>
+						<View style={{ flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: 6, marginTop: 10 }} >
+							<Text style={{ fontSize: 16, fontWeight: 'bold' }} >Selected Sub- Category: </Text>
+							<Text style={{ fontSize: 16, textDecorationLine: 'underline' }} >{this.state.selectedSubCategory === '' ? 'Nothing Selected' : this.state.selectedSubCategory}</Text>
+						</View>
+					</View>
+
+					{/* Product Details */}
 					<View style={styles.details}>
 						<TextInput
 							mode="outlined"
-							label="Sub-Category Title"
-							placeholder="Sub-Category Title" 
+							label="Product Title"
+							placeholder="Product Title" 
 							returnKeyType="done"
-							ref={this.subCategoryTitle}
-							value={this.state.subCategoryTitle}
-							onChangeText={ (subCategoryTitle) => this.setState({ subCategoryTitle })}
+							ref={this.productTitle}
+							value={this.state.productTitle}
+							onChangeText={ (productTitle) => this.setState({ productTitle })}
 							style={styles.inputStyles}
 						/>
 					</View>
 
+					{/* Save the Product Button */}
 					<View style={{ marginHorizontal: 30, marginTop: 20 }} >
 						<TouchableOpacity 
-							onPress={this.checkInfo}
+							onPress={() => alert('YEllo')}
 							style={{ paddingVertical: 15, backgroundColor: '#000', paddingHorizontal: 20, borderRadius: 20 }} >
 							<Text style={{ textAlign: 'center', color: '#fff' }} >
 								Submit

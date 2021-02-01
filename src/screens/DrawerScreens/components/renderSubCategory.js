@@ -69,7 +69,7 @@ const renderSubCategory = (item, navigation) => {
 	return (
 		<View style={styles.subCategoryStyles} >
 			<Swipeable renderRightActions={RightActions} >
-				<TouchableHighlight onPress={() => navigation.navigate('productsScreen', { categoryID: item.categoryID, screen: "subcategory" })} >
+				<TouchableHighlight onPress={() => navigation.navigate('ProductsScreen', { categoryID: item.categoryID })} >
 					<View style={{ padding: 10 }} >
 						<Text style={{ fontSize: 15, fontWeight: 'bold', color: '#fff' }} >
 							{item.subCategoryTitle}

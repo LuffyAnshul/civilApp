@@ -56,17 +56,6 @@ export default class CategoriesScreen extends React.Component {
 			<SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
 				<View style={{ flex: 1 }} >
 
-					{/* ADD NEW CATEGORY */}
-					<View style={{ position: 'absolute', right: 5, marginRight: 10, marginVertical: 10 }}>
-						<TouchableOpacity 
-							onPress={() => navigation.navigate('addCategoryScreen')}
-							style={{ paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10, backgroundColor: 'lightblue', elevation: 15 }} >
-							<Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>
-								Add New
-							</Text>
-						</TouchableOpacity>
-					</View>
-
 					{/* Category FlatList */}
 					<View style={{ flex: 1, marginTop: 30 }} >
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Categories</Text>

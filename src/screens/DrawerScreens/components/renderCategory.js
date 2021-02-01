@@ -49,7 +49,9 @@ const renderCategory = (item, navigation) => {
 
 		return (
 			<>
-				<TouchableOpacity onPress={deleteCategory}>
+				<TouchableOpacity onPress={() => {
+					deleteCategory()
+				}}>
 					<View style={{ flex: 1, backgroundColor: 'red', justifyContent: 'center' }}>
 						<Animated.Text style={{ color: 'white', paddingHorizontal: 10, fontWeight: '600', transform: [{ scale }] }}>
 							Delete
@@ -59,7 +61,7 @@ const renderCategory = (item, navigation) => {
 				<TouchableOpacity onPress={() => alert('Archieve button pressed')}>
 					<View style={{ flex: 1, backgroundColor: 'green', justifyContent: 'center' }}>
 						<Animated.Text style={{ color: 'white', paddingHorizontal: 10, fontWeight: '600', transform: [{ scale }] }}>
-							Archive
+							Edit
 						</Animated.Text>
 					</View>
 				</TouchableOpacity>
@@ -70,7 +72,7 @@ const renderCategory = (item, navigation) => {
 	return (
 		<View style={styles.categoryStyles} >
 			<Swipeable renderRightActions={RightActions} >
-				<TouchableHighlight onPress={() => navigation.navigate('productsScreen', { categoryID: item.categoryID, screen: "category" })} >
+				<TouchableHighlight onPress={() => navigation.navigate('SubCategoriesScreen', { categoryID: item.categoryID, categoryTitle: item.categoryTitle })} >
 					<View style={{ padding: 10 }} >
 						<Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }} >
 							{item.categoryTitle}

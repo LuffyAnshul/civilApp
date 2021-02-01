@@ -27,8 +27,6 @@ export default class MyAccountScreen extends React.Component {
 			.then((value) => this.setState({ userMobile: value }));
 		await AsyncStorage.getItem('userImage')
 			.then((value) => this.setState({ userImage: value }));
-
-		console.log(this.state.userImage)
 	}
 
 	render() {

@@ -10,6 +10,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AddScreen from './DrawerScreens/screens/AddScreen';
 import AddCategoryScreen from './DrawerScreens/screens/AddCategoryScreen';
 import AddSubCategoryScreen from './DrawerScreens/screens/AddSubCategoryScreen';
+import AddProductScreen from './DrawerScreens/screens/AddProductScreen';
 
 // Import Products Tab Screens
 import CategoriesScreen from './DrawerScreens/screens/CategoriesScreen';
@@ -31,6 +32,7 @@ function AddCategorySubCategoryTab () {
 			screenOptions={{
 				headerStyle: { backgroundColor: '#000' },
 				headerTintColor: '#fff',
+				headerTitleAlign: 'center',
 				headerTitleStyle: { fontWeight: 'bold' }
 			}}
 		>
@@ -46,6 +48,10 @@ function AddCategorySubCategoryTab () {
 				name="AddSubCategoryScreen"
 				component={AddSubCategoryScreen}
 				options={{ title: 'Add Sub-Category' }} />
+			<Stack.Screen
+				name="AddProductScreen"
+				component={AddProductScreen}
+				options={{ title: 'Add Product' }} />
 		</Stack.Navigator>
 	);
 }
@@ -89,7 +95,7 @@ function SettingsTab () {
 			<Stack.Screen
 				name="SettingsScreen"
 				component={SettingsScreen}
-				options={{ title: 'Add Screen' }}/>
+				options={{ title: 'Settings' }}/>
 			<Stack.Screen
 				name="MyAccountScreen"
 				component={MyAccountScreen}
@@ -105,7 +111,7 @@ function SettingsTab () {
 function MaterialBottomNavigation () {
 	return (
 		<Tab.Navigator
-			initialRouteName="AddCategorySubCategoryTab"
+			initialRouteName="SettingsTab"
 			activeColor="#03a9f4"
 			inactiveColor="#babcbe"
 			barStyle={{ backgroundColor: '#000' }}

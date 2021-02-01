@@ -135,9 +135,12 @@ export default class SubCategoriesScreen extends React.Component {
 		this.getSubCategory = this.getSubCategory.bind(this);
 		this.state = {
 			navigation: props.navigation,
+			params: props.route.params,
 			allCategories: [],
 			allSubCategoriesData: [],
-			isLoading: true
+			isLoading: true,
+			selectedChipId: null,
+			selectedChipTitle: ''
 		}
 	}
 
@@ -155,26 +158,29 @@ export default class SubCategoriesScreen extends React.Component {
 	async componentDidMount() {
 
 		let create = await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS subcategory (subCategoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryTitle TEXT NOT NULL, CONSTRAINT categoryID FOREIGN KEY (categoryID) REFERENCES category (categoryID) ON DELETE CASCADE ON UPDATE CASCADE)", [])
+		this.setState({ selectedChipId: this.state.params.categoryID, selectedChipTitle: this.state.params.categoryTitle });
 
-		this.getSubCategory()
+		this.getSubCategory();
+		this.getCategory();
 	}
 
 	async getSubCategory () {
 		let tempvar = []
-		this.setState({ allSubCategoriesData: tempvar, isLoading: true })
-
-		let selectQuery = await this.ExecuteQuery("SELECT * FROM subcategory", [])
+		this.setState({ allSubCategoriesData: tempvar, isLoading: true });
+		let { selectedChipId, selectedChipTitle } = this.state;
+		
+		let selectQuery = selectedChipId === 0 ?
+			await this.ExecuteQuery("SELECT * FROM subcategory", []) :
+			await this.ExecuteQuery("SELECT * FROM subcategory WHERE categoryID = ?;", [selectedChipId])
 
 		if ( selectQuery.rows.length === 0 ) {
-			return alert('No Sub Category Exist')
+			return alert(`No Sub Category Exist For - Category ${selectedChipTitle}`)
 		}	
 		var temp = [];
 		for (let i = 0; i < selectQuery.rows.length; ++i){
 			temp.push(selectQuery.rows.item(i));
 		}
-		this.setState({ allSubCategoriesData: temp, isLoading: false })
-
-		this.getCategory();
+		this.setState({ allSubCategoriesData: temp, isLoading: false });
 	}
 
 	async getCategory () {
@@ -188,31 +194,34 @@ export default class SubCategoriesScreen extends React.Component {
 	}
 
 	render() {
-		const { navigation } = this.state;
+		const { navigation, selectedChipId } = this.state;
 
 		return (
 			<SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
 				<View style={{ flex: 1 }} >
 
-					{/* ADD NEW CATEGORY */}
-					<View style={{ alignItems: 'center', marginRight: 10, marginVertical: 10 }}>
-						<TouchableOpacity 
-							onPress={() => navigation.navigate('addSubCategoryScreen')}
-							style={{ paddingVertical: 10, paddingHorizontal: 15, borderRadius: 10, backgroundColor: 'lightblue', elevation: 15 }} >
-							<Text style={{ fontSize: 20, textAlign: 'center', fontWeight: 'bold' }}>
-								Add New
-							</Text>
-						</TouchableOpacity>
-					</View>
-
 					{/* Chips */}
 					<View>
-
-						<Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }} >
+						<Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10, marginTop: 10 }} >
 							Categories
 						</Text>
 
-						<View style={{ flexWrap: 'wrap' }} >
+						<View style={{ flexWrap: 'wrap', flexDirection: 'row' }} >
+							<View style={{ margin: 5, flexWrap: 'wrap' }}>
+								<Chip
+									mode="outlined" //changing display mode, default is flat.
+									height={30} //give desirable height to chip
+									
+									textStyle={{ fontSize: 15 }} //label properties
+									onPress={async() => {
+										await this.setState({ selectedChipId: 0 })
+										this.getSubCategory()
+									}}
+									selected={ selectedChipId === 0 ? true : false }
+								>
+									All
+								</Chip>
+							</View>
 							<FlatList 
 								contentContainerStyle={{ flexDirection : "row", flexWrap : "wrap" }}
 								data={this.state.allCategories}
@@ -223,7 +232,11 @@ export default class SubCategoriesScreen extends React.Component {
 											mode="outlined" //changing display mode, default is flat.
 											height={30} //give desirable height to chip
 											textStyle={{ fontSize: 15 }} //label properties
-											onPress={() => alert('Clicked Chip'+ item.categoryTitle)}
+											onPress={async() => {
+												await this.setState({ selectedChipId: item.categoryID, selectedChipTitle: item.categoryTitle });
+												this.getSubCategory()
+											}}
+											selected={ item.categoryID === selectedChipId ? true : false }
 										>
 											{item.categoryTitle}
 										</Chip>
