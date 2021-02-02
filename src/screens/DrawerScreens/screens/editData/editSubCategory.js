@@ -5,16 +5,16 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
-export default class AddCategoryScreen extends React.Component {
+export default class EditSubCategoryScreen extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.categoryTitle = React.createRef();
-		this.categoryDescription = React.createRef();
+		this.subCategoryTitle = React.createRef();
 		this.state = {
 			navigation: props.navigation,
-			categoryTitle: '',
-			categoryDescription: ''
+			params: props.route.params.item,
+			subCategoryID: null,
+			subCategoryTitle: '',
 		}
 	}
 
@@ -29,12 +29,16 @@ export default class AddCategoryScreen extends React.Component {
 		});
 	});
 
-	async uploadCategoryToDB () {
+	componentDidMount() {
+		let { subCategoryID, subCategoryTitle } = this.state.params;
 
-		const { categoryTitle, categoryDescription } = this.state;
+		this.setState({ subCategoryID, subCategoryTitle })
+	}
 
-		let res = await this.ExecuteQuery("INSERT INTO category (categoryTitle, categoryDescription) VALUES (?,?)", [categoryTitle, categoryDescription]);
+	async updateSubCategoryToDB (subCategoryID, subCategoryTitle) {
+		let res = await this.ExecuteQuery("UPDATE subcategory SET subCategoryTitle = ? WHERE subCategoryID = ?", [subCategoryTitle, subCategoryID]);
 
+		console.log(res);
 		if (res.rowsAffected > 0) {
 			return true;
 		}
@@ -42,22 +46,18 @@ export default class AddCategoryScreen extends React.Component {
 	}
 
 	checkInfo = () => {
-		const { categoryTitle, categoryDescription, navigation } = this.state;
+		const { subCategoryID, subCategoryTitle, navigation } = this.state;
 
-		if (categoryTitle != '') {
-			if (categoryDescription != '') {
-				if (this.uploadCategoryToDB()) {
-					return navigation.goBack();
-				}
-				return alert('Category Registration Failed');
+		if (subCategoryTitle != '') {
+			if (this.updateSubCategoryToDB(subCategoryID, subCategoryTitle)) {
+				return navigation.goBack();
 			}
-			return alert('Description cannot be empty');
+			return alert('Sub-Category Registration Failed');
 		}
-		return alert('Title cannot be empty');
+		return alert('Sub-Category Title cannot be Empty');
 	}
 
 	render() {
-
 		return (
 			<SafeAreaView style={{flex: 1}}>
 				<ScrollView 
@@ -66,32 +66,16 @@ export default class AddCategoryScreen extends React.Component {
 					contentContainerStyle={{ justifyContent: 'center', paddingVertical: 30 }}
 				>
 
-					{/* Category Title */}
+					{/* Sub Category Update */}
 					<View style={styles.details}>
 						<TextInput
 							mode="outlined"
-							label="Category Title"
-							placeholder="Category Title" 
-							returnKeyType="next"
-							blurOnSubmit={false}
-							ref={this.categoryTitle}
-							value={this.state.categoryTitle}
-							onChangeText={ (categoryTitle) => this.setState({ categoryTitle })}
-							onSubmitEditing={() => this.categoryDescription.current.focus()}
-							style={styles.inputStyles}
-						/>
-					</View>
-
-					{/* Category Description */}
-					<View style={styles.details}>
-						<TextInput
-							mode="outlined"
-							label="Category Description"
-							placeholder="Category Description" 
+							label="Sub-Category Title"
+							placeholder="Sub-Category Title" 
 							returnKeyType="done"
-							ref={this.categoryDescription}
-							value={this.state.categoryDescription}
-							onChangeText={ (categoryDescription) => this.setState({ categoryDescription })}
+							ref={this.subCategoryTitle}
+							value={this.state.subCategoryTitle}
+							onChangeText={ (subCategoryTitle) => this.setState({ subCategoryTitle })}
 							style={styles.inputStyles}
 						/>
 					</View>
@@ -108,6 +92,7 @@ export default class AddCategoryScreen extends React.Component {
 
 				</ScrollView>
 			</SafeAreaView>
+		
 		);
 	}
 }

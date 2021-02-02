@@ -11,12 +11,11 @@ export default class AddScreen extends React.Component {
 	}
 
 	render() {
-		
-		const { navigation } = this.state
+		const { navigation } = this.state;
 
 		return (
 			<SafeAreaView style={{ flex: 1 }} >
-				<ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'center' }} >
+				<ScrollView contentContainerStyle={{ justifyContent: 'center', paddingVertical: 20 }} >
 
 					{/* Heading */}
 					<View style={styles.container} >
@@ -71,7 +70,8 @@ export default class AddScreen extends React.Component {
 
 const styles = StyleSheet.create({
 	container: { 
-		margin: 10, 
+		margin: 10,
+		paddingTop: 20, 
 		alignItems: 'center' 
 	},
 	headingStyle: { 

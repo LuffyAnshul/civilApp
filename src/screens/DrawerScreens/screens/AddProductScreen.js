@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -11,15 +11,21 @@ export default class AddCategoryScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.productTitle = React.createRef();
+		this.hsnNumber = React.createRef();
+		this.gstNumber = React.createRef();
+		this.rate = React.createRef();
 		this.state = {
 			navigation: props.navigation,
 			allCategoriesData: 0,
 			allSubCategoriesData: 0,
-			productTitle: '',
 			selectedCategoryId: 0,
 			selectedCategory: '',
 			selectedSubCategoryId: 0,
-			selectedSubCategory: ''
+			selectedSubCategory: '',
+			productTitle: '',
+			hsnNumber: null,
+			gstNumber: null,
+			rate: null
 		}
 	}
 
@@ -65,9 +71,9 @@ export default class AddCategoryScreen extends React.Component {
 
 	async uploadProductToDB (){
 
-		const { selectedId, subCategoryTitle } = this.state;
+		const { selectedCategoryId, selectedSubCategoryId, productTitle, hsnNumber,gstNumber, rate } = this.state;
 
-		let res = await this.ExecuteQuery("INSERT INTO subcategory (categoryID, subCategoryTitle) VALUES (?,?)", [selectedId, subCategoryTitle])
+		let res = await this.ExecuteQuery("INSERT INTO product (subCategoryID, categoryID, productName, productHSN, productGST, productRate) VALUES (?, ?, ?, ?, ?, ?)", [selectedSubCategoryId, selectedCategoryId, productTitle, hsnNumber, gstNumber, rate]);
 		
 		if (res.rowsAffected > 0) {
 			return true;
@@ -76,18 +82,28 @@ export default class AddCategoryScreen extends React.Component {
 	}
 
 	checkInfo = () => {
-		const { selectedCategory, subCategoryTitle, navigation } = this.state;
+		const { selectedSubCategory, productTitle, hsnNumber, gstNumber, rate, navigation } = this.state;
 
-		if (selectedCategory != '') {
-			if (subCategoryTitle != '') {
-				if (this.uploadSubCategoryToDB()) {
-					return navigation.goBack();
+		let hsnReg = /^\d{8}$/;
+		let gstReg = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+
+		if (selectedSubCategory != '') {
+			if (productTitle != '') {
+				if (hsnReg.test(hsnNumber) && gstReg.test(gstNumber)) {
+					if(rate > 0) {
+						if (this.uploadProductToDB()) {
+							return navigation.goBack();
+						}
+						
+						return alert('Product Registration Failed');
+					}
+					return alert('Rate cannot be negative');
 				}
-				return alert('Sub-Category Registration Failed');
+				return alert('Check HSN and GST Number');
 			}
-			return alert('Sub-Category Title cannot be Empty');
+			return alert('Product Title cannot be Empty');
 		}
-		return alert('Select Parent Category');
+		return alert('Select Parent Sub- Category');
 	}
 
 	render() {
@@ -96,9 +112,7 @@ export default class AddCategoryScreen extends React.Component {
 
 		return (
 			<SafeAreaView style={{flex: 1}}>
-				<View 
-					style={{ flex: 1, margin: 15, borderRadius: 30, backgroundColor: '#fff', justifyContent: 'center' }}
-				>
+				<KeyboardAvoidingView style={{ flex: 1, margin: 15, borderRadius: 30, backgroundColor: '#fff', justifyContent: 'center' }} >
 					{/* Select Category */}
 					<View style={styles.details} >
 						<SearchableDropdown
@@ -110,7 +124,7 @@ export default class AddCategoryScreen extends React.Component {
 								padding: 1
 							}}
 							textInputStyle={{
-								padding: 12,
+								// padding: 12,
 								borderWidth: 1,
 								borderColor: '#ccc',
 								backgroundColor: '#FAF7F6',
@@ -180,22 +194,69 @@ export default class AddCategoryScreen extends React.Component {
 
 					{/* Product Details */}
 					<View style={styles.details}>
+
+						{/* Product Title */}
 						<TextInput
 							mode="outlined"
 							label="Product Title"
 							placeholder="Product Title" 
-							returnKeyType="done"
 							ref={this.productTitle}
 							value={this.state.productTitle}
 							onChangeText={ (productTitle) => this.setState({ productTitle })}
 							style={styles.inputStyles}
+							returnKeyType="next"
+							onSubmitEditing={() => this.hsnNumber.current.focus()}
+							blurOnSubmit={false}
+						/>
+
+						{/* HSN Number */}
+						<TextInput
+							mode="outlined"
+							label="HSN Number"
+							placeholder="HSN Number" 
+							ref={this.hsnNumber}
+							value={this.state.hsnNumber}
+							onChangeText={ (hsnNumber) => this.setState({ hsnNumber })}
+							style={styles.inputStyles}
+							returnKeyType="next"
+							onSubmitEditing={() => this.gstNumber.current.focus()}
+							blurOnSubmit={false}
+							maxLength={8}
+							keyboardType="number-pad"
+						/>
+
+						{/* GST Number */}
+						<TextInput
+							mode="outlined"
+							label="GST Number"
+							placeholder="GST Number" 
+							ref={this.gstNumber}
+							value={this.state.gstNumber}
+							onChangeText={ (gstNumber) => this.setState({ gstNumber })}
+							style={styles.inputStyles}
+							returnKeyType="next"
+							onSubmitEditing={() => this.rate.current.focus()}
+							blurOnSubmit={false}
+						/>
+
+						{/* Product Rate */}
+						<TextInput
+							mode="outlined"
+							label="Rate"
+							placeholder="Rate" 
+							ref={this.rate}
+							value={this.state.rate}
+							onChangeText={ (rate) => this.setState({ rate })}
+							style={styles.inputStyles}
+							keyboardType="numeric"
+							returnKeyType="done"
 						/>
 					</View>
 
 					{/* Save the Product Button */}
 					<View style={{ marginHorizontal: 30, marginTop: 20 }} >
 						<TouchableOpacity 
-							onPress={() => alert('YEllo')}
+							onPress={this.checkInfo}
 							style={{ paddingVertical: 15, backgroundColor: '#000', paddingHorizontal: 20, borderRadius: 20 }} >
 							<Text style={{ textAlign: 'center', color: '#fff' }} >
 								Submit
@@ -203,7 +264,7 @@ export default class AddCategoryScreen extends React.Component {
 						</TouchableOpacity>
 					</View>
 
-				</View>
+				</KeyboardAvoidingView>
 			</SafeAreaView>
 		);
 	}

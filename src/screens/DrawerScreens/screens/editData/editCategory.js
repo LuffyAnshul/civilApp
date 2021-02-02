@@ -5,7 +5,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
-export default class AddCategoryScreen extends React.Component {
+export default class EditCategoryScreen extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -13,6 +13,8 @@ export default class AddCategoryScreen extends React.Component {
 		this.categoryDescription = React.createRef();
 		this.state = {
 			navigation: props.navigation,
+			params: props.route.params.item,
+			categoryID: null,
 			categoryTitle: '',
 			categoryDescription: ''
 		}
@@ -29,11 +31,14 @@ export default class AddCategoryScreen extends React.Component {
 		});
 	});
 
-	async uploadCategoryToDB () {
+	componentDidMount() {
+		let { categoryID, categoryTitle, categoryDescription } = this.state.params
 
-		const { categoryTitle, categoryDescription } = this.state;
+		this.setState({ categoryID, categoryTitle, categoryDescription });
+	}
 
-		let res = await this.ExecuteQuery("INSERT INTO category (categoryTitle, categoryDescription) VALUES (?,?)", [categoryTitle, categoryDescription]);
+	async updateCategoryToDB(categoryID, categoryTitle, categoryDescription) {
+		let res = await this.ExecuteQuery("UPDATE category SET categoryTitle = ?, categoryDescription = ? WHERE categoryID = ?", [categoryTitle, categoryDescription, categoryID]);
 
 		if (res.rowsAffected > 0) {
 			return true;
@@ -42,11 +47,11 @@ export default class AddCategoryScreen extends React.Component {
 	}
 
 	checkInfo = () => {
-		const { categoryTitle, categoryDescription, navigation } = this.state;
+		const { categoryID, categoryTitle, categoryDescription, navigation } = this.state;
 
 		if (categoryTitle != '') {
 			if (categoryDescription != '') {
-				if (this.uploadCategoryToDB()) {
+				if (this.updateCategoryToDB(categoryID, categoryTitle, categoryDescription)) {
 					return navigation.goBack();
 				}
 				return alert('Category Registration Failed');
@@ -57,7 +62,6 @@ export default class AddCategoryScreen extends React.Component {
 	}
 
 	render() {
-
 		return (
 			<SafeAreaView style={{flex: 1}}>
 				<ScrollView 
@@ -108,6 +112,7 @@ export default class AddCategoryScreen extends React.Component {
 
 				</ScrollView>
 			</SafeAreaView>
+		
 		);
 	}
 }

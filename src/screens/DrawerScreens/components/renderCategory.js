@@ -5,7 +5,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
-const renderCategory = (item, navigation) => {
+function renderCategory (item, navigation) {
 
 	const ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
 		db.transaction((trans) => {
@@ -33,6 +33,7 @@ const renderCategory = (item, navigation) => {
 					onPress: async() => {
 						await ExecuteQuery("DELETE FROM category WHERE categoryID = ?", [item.categoryID]);
 						await ExecuteQuery("DELETE FROM subcategory WHERE categoryID = ?", [item.categoryID]);
+						await ExecuteQuery("DELETE FROM product WHERE categoryID = ?", [item.categoryID]);
 					}
 				}
 			],
@@ -49,18 +50,16 @@ const renderCategory = (item, navigation) => {
 
 		return (
 			<>
-				<TouchableOpacity onPress={() => {
-					deleteCategory()
-				}}>
+				<TouchableOpacity onPress={deleteCategory}>
 					<View style={{ flex: 1, backgroundColor: 'red', justifyContent: 'center' }}>
 						<Animated.Text style={{ color: 'white', paddingHorizontal: 10, fontWeight: '600', transform: [{ scale }] }}>
 							Delete
 						</Animated.Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => alert('Archieve button pressed')}>
+				<TouchableOpacity onPress={() => navigation.navigate('EditCategoryScreen', { item })} >
 					<View style={{ flex: 1, backgroundColor: 'green', justifyContent: 'center' }}>
-						<Animated.Text style={{ color: 'white', paddingHorizontal: 10, fontWeight: '600', transform: [{ scale }] }}>
+						<Animated.Text style={{ color: 'white', paddingHorizontal: 20, fontWeight: '600', transform: [{ scale }] }}>
 							Edit
 						</Animated.Text>
 					</View>
@@ -98,7 +97,37 @@ const styles = StyleSheet.create({
 		borderStartWidth: 5, 
 		borderBottomWidth: 5, 
 		borderColor: '#eee'
-	}
+	},
+	modalView: {
+		margin: 20,
+		backgroundColor: "white",
+		borderRadius: 20,
+		padding: 35,
+		alignItems: "center",
+		shadowColor: "#000",
+		shadowOffset: {
+		  width: 0,
+		  height: 2
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5
+	  },
+	  openButton: {
+		backgroundColor: "#F194FF",
+		borderRadius: 20,
+		padding: 10,
+		elevation: 2
+	  },
+	  textStyle: {
+		color: "white",
+		fontWeight: "bold",
+		textAlign: "center"
+	  },
+	  modalText: {
+		marginBottom: 15,
+		textAlign: "center"
+	  }
 });
 
 export default renderCategory;

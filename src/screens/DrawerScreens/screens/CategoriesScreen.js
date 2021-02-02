@@ -29,10 +29,10 @@ export default class CategoriesScreen extends React.Component {
 		});
 	});
 
-	componentDidMount() {
-
-		let create = this.ExecuteQuery("CREATE TABLE IF NOT EXISTS category(categoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryTitle MEDIUMTEXT NOT NULL, categoryDescription LONGTEXT NOT NULL)", []);
-
+	async componentDidMount() {
+		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS category (categoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryTitle MEDIUMTEXT NOT NULL, categoryDescription LONGTEXT NOT NULL)", []);
+		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS subcategory (subCategoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryTitle TEXT NOT NULL, CONSTRAINT categoryID FOREIGN KEY (categoryID) REFERENCES category (categoryID) ON DELETE CASCADE ON UPDATE CASCADE)", []);
+		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS product (productID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryID INTEGER NOT NULL, productName TEXT NOT NULL, productHSN INTEGER NOT NULL, productGST TEXT NOT NULL, productRate FLOAT NOT NULL, CONSTRAINT subCategoryID FOREIGN KEY (subCategoryID) REFERENCES subcategory (subCategoryID) ON DELETE CASCADE ON UPDATE CASCADE)")
 		this.getData();
 	}
 

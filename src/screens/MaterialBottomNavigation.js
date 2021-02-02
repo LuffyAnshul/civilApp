@@ -16,6 +16,9 @@ import AddProductScreen from './DrawerScreens/screens/AddProductScreen';
 import CategoriesScreen from './DrawerScreens/screens/CategoriesScreen';
 import SubCategoriesScreen from './DrawerScreens/screens/SubCategoriesScreen';
 import ProductsScreen from './DrawerScreens/screens/ProductsScreen';
+import EditCategoryScreen from './DrawerScreens/screens/editData/editCategory';
+import EditSubCategoryScreen from './DrawerScreens/screens/editData/editSubCategory';
+import EditProductScreen from './DrawerScreens/screens/editData/editProduct';
 
 // Import Settings Screens
 import SettingsScreen from './DrawerScreens/screens/SettingsScreen';
@@ -71,13 +74,26 @@ function ProductsTab () {
 				component={CategoriesScreen}
 				options={{ title: 'Category Screen' }}/>
 			<Stack.Screen
+				name="EditCategoryScreen"
+				component={EditCategoryScreen}
+				options={{ title: 'Edit Category Screen' }} />
+			<Stack.Screen
 				name="SubCategoriesScreen"
 				component={SubCategoriesScreen}
 				options={{ title: 'Sub-Category Screen' }}/>
 			<Stack.Screen
+				name="EditSubCategoryScreen"
+				component={EditSubCategoryScreen}
+				options={{ title: 'Edit Sub Category Screen' }} />
+			<Stack.Screen
 				name="ProductsScreen"
 				component={ProductsScreen}
 				options={{ title: 'Products Screen' }} />
+			<Stack.Screen
+				name="EditProductScreen"
+				component={EditProductScreen}
+				options={{ title: 'Edit Product Screen' }} />
+		
 		</Stack.Navigator>
 	);
 }
@@ -111,7 +127,7 @@ function SettingsTab () {
 function MaterialBottomNavigation () {
 	return (
 		<Tab.Navigator
-			initialRouteName="SettingsTab"
+			initialRouteName="ProductsTab"
 			activeColor="#03a9f4"
 			inactiveColor="#babcbe"
 			barStyle={{ backgroundColor: '#000' }}

@@ -7,124 +7,6 @@ import renderSubCategory from '../components/renderSubCategory';
 
 const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
-const data = [  
-	{
-		subCategoryID: 1,
-		categoryID: 1,
-		categoryTitle: 'Cables',
-		subCategoryTitle: 'Termination Gland for Armoured Cable'
-	},
-	{
-		subCategoryID: 2,
-		categoryID: 1,
-		categoryTitle: 'Cables',
-		subCategoryTitle: 'Copper Armoured Cable'
-	},
-	{
-		subCategoryID: 3,
-		categoryID: 1,
-		categoryTitle: 'Cables',
-		subCategoryTitle: 'Aluminium Armoured Cable'
-	},
-	{
-		subCategoryID: 4,
-		categoryID: 2	,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-Hot Dip Galvanised'
-	},
-	{
-		subCategoryID: 5,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-Powder Coated'
-	},
-	{
-		subCategoryID: 6,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-PreGalvanised'
-	},
-	{
-		subCategoryID: 7,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-PreGalvanised'
-	},
-	{
-		subCategoryID: 8,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-PreGalvanised'
-	},
-	{
-		subCategoryID: 9,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-PreGalvanised'
-	},
-	{
-		subCategoryID: 10,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-PreGalvanised'
-	},
-	{
-		subCategoryID: 11,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-PreGalvanised'
-	},
-	{
-		subCategoryID: 12,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-PreGalvanised'
-	},
-	{
-		subCategoryID: 13,
-		categoryID: 2,
-		categoryTitle: 'Tray',
-		subCategoryTitle: 'Perforated-PreGalvanised'
-	},
-
-]
-
-const dataSource = [
-	{
-		id: '1',
-		name: "Cables",
-	},
-	{
-		id: '2',
-		name: "Tray",
-	},
-	{
-		id: '3',
-		name: "Cables",
-	},
-	{
-		id: '4',
-		name: "Tray",
-	},
-	{
-		id: '5',
-		name: "Cables",
-	},
-	{
-		id: '6',
-		name: "Tray",
-	},
-	{
-		id: '7',
-		name: "Cables",
-	},
-	{
-		id: '8',
-		name: "Tray",
-	},
-	
-]
-
 // Disable FlatList Render Warning for categories display
 LogBox.ignoreLogs(['`flexWrap: `wrap`` is not supported'])
 
@@ -156,17 +38,15 @@ export default class SubCategoriesScreen extends React.Component {
 	});
 
 	async componentDidMount() {
-
-		let create = await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS subcategory (subCategoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryTitle TEXT NOT NULL, CONSTRAINT categoryID FOREIGN KEY (categoryID) REFERENCES category (categoryID) ON DELETE CASCADE ON UPDATE CASCADE)", [])
-		this.setState({ selectedChipId: this.state.params.categoryID, selectedChipTitle: this.state.params.categoryTitle });
+		await this.setState({ selectedChipId: this.state.params.categoryID, selectedChipTitle: this.state.params.categoryTitle });
 
 		this.getSubCategory();
 		this.getCategory();
 	}
 
 	async getSubCategory () {
-		let tempvar = []
-		this.setState({ allSubCategoriesData: tempvar, isLoading: true });
+		let temp = [];
+		this.setState({ allSubCategoriesData: temp, isLoading: true });
 		let { selectedChipId, selectedChipTitle } = this.state;
 		
 		let selectQuery = selectedChipId === 0 ?
@@ -175,8 +55,8 @@ export default class SubCategoriesScreen extends React.Component {
 
 		if ( selectQuery.rows.length === 0 ) {
 			return alert(`No Sub Category Exist For - Category ${selectedChipTitle}`)
-		}	
-		var temp = [];
+		}
+
 		for (let i = 0; i < selectQuery.rows.length; ++i){
 			temp.push(selectQuery.rows.item(i));
 		}
