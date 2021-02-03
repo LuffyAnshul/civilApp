@@ -16,7 +16,7 @@ export default class EditProductScreen extends React.Component {
 		this.state = {
 			navigation: props.navigation,
 			params: props.route.params.item,
-			subCategoryID: null,
+			productID: null,
 			productName: '',
 			productHSN: null,
 			productGST: null,
@@ -25,11 +25,11 @@ export default class EditProductScreen extends React.Component {
 	}
 
 	componentDidMount() {
-		let { subCategoryID, productName, productHSN, productGST, productRate } = this.state.params;
+		let { productID, productName, productHSN, productGST, productRate } = this.state.params;
 		
 		productHSN = productHSN.toString();
 		productRate = productRate.toString();
-		this.setState({ productName, productHSN, productGST, productRate, subCategoryID })
+		this.setState({ productName, productHSN, productGST, productRate, productID })
 	}
 
 	ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
@@ -43,11 +43,9 @@ export default class EditProductScreen extends React.Component {
 		});
 	});
 
-	async updateProductToDB (subCategoryID, productName, productHSN, productGST, productRate) {
-		console.log(subCategoryID)
-		let res = await this.ExecuteQuery("UPDATE product SET productName = ?, productHSN = ?, productGST = ?, productRate = ? WHERE subCategoryID = ?", [ productName, productHSN, productGST, productRate, subCategoryID]);
+	async updateProductToDB (productID, productName, productHSN, productGST, productRate) {
+		let res = await this.ExecuteQuery("UPDATE product SET productName = ?, productHSN = ?, productGST = ?, productRate = ? WHERE productID = ?", [ productName, productHSN, productGST, productRate, productID]);
 
-		console.log(res);
 		if (res.rowsAffected > 0) {
 			return true;
 		}
@@ -55,7 +53,7 @@ export default class EditProductScreen extends React.Component {
 	}
 
 	checkInfo = () => {
-		const { subCategoryID, productName, productHSN, productGST, productRate, navigation } = this.state;
+		const { productID, productName, productHSN, productGST, productRate, navigation } = this.state;
 
 		let hsnReg = /^\d{8}$/;
 		let gstReg = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
@@ -63,7 +61,7 @@ export default class EditProductScreen extends React.Component {
 		if (productName != '') {
 			if (hsnReg.test(productHSN) && gstReg.test(productGST)) {
 				if(productRate > 0) {
-					if (this.updateProductToDB(subCategoryID, productName, productHSN, productGST, productRate)) {
+					if (this.updateProductToDB(productID, productName, productHSN, productGST, productRate)) {
 						return navigation.goBack();
 					}
 					

@@ -128,7 +128,7 @@ export default class SubCategoriesScreen extends React.Component {
 					</View>
 					
 					{/* Sub Category FlatList */}
-					<View>
+					<View style={{ flex: 1 }} >
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Sub Categories</Text>
 						{ !this.state.isLoading && this.state.allSubCategoriesData.length ? 
 							<FlatList 

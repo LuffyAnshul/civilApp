@@ -5,8 +5,8 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
-function renderCategory (item, navigation) {
-
+function renderOrders (item, navigation) {
+	
 	const ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
 		db.transaction((trans) => {
 			trans.executeSql(sql, params, (trans, results) => {
@@ -20,7 +20,7 @@ function renderCategory (item, navigation) {
 
 	const deleteCategory = () => {
 		Alert.alert(
-			`Do You Want to Delete ${item.categoryTitle} ?`,
+			`Do You Want to Remove ${item.productName} ?`,
 			"Please Confirm",
 			[
 				{
@@ -31,9 +31,7 @@ function renderCategory (item, navigation) {
 				{ 
 					text: "OK", 
 					onPress: async() => {
-						await ExecuteQuery("DELETE FROM category WHERE categoryID = ?", [item.categoryID]);
-						await ExecuteQuery("DELETE FROM subcategory WHERE categoryID = ?", [item.categoryID]);
-						await ExecuteQuery("DELETE FROM product WHERE categoryID = ?", [item.categoryID]);
+						await ExecuteQuery("DELETE FROM orderTemp WHERE productID = ?", [item.productID]);
 					}
 				}
 			],
@@ -57,13 +55,6 @@ function renderCategory (item, navigation) {
 						</Animated.Text>
 					</View>
 				</TouchableOpacity>
-				<TouchableOpacity onPress={() => navigation.navigate('EditCategoryScreen', { item })} >
-					<View style={{ flex: 1, backgroundColor: 'green', justifyContent: 'center' }}>
-						<Animated.Text style={{ color: 'white', paddingHorizontal: 20, fontWeight: '600', transform: [{ scale }] }}>
-							Edit
-						</Animated.Text>
-					</View>
-				</TouchableOpacity>
 			</>
 		)
 	}
@@ -71,13 +62,13 @@ function renderCategory (item, navigation) {
 	return (
 		<View style={styles.categoryStyles} >
 			<Swipeable renderRightActions={RightActions} >
-				<TouchableHighlight onPress={() => navigation.navigate('SubCategoriesScreen', { categoryID: item.categoryID, categoryTitle: item.categoryTitle })} >
+				<TouchableHighlight >
 					<View style={{ padding: 10 }} >
 						<Text style={{ fontSize: 20, fontWeight: 'bold', color: '#fff' }} >
-							{item.categoryTitle}
+							{item.productName}
 						</Text>
 						<Text style={{ fontSize: 13, marginTop: 5, color: '#f9f9f9' }} >
-							{item.categoryDescription}
+							{item.productRate}
 						</Text>
 					</View>
 				</TouchableHighlight>
@@ -100,4 +91,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default renderCategory;
+export default renderOrders;

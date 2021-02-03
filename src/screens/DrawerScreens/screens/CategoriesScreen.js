@@ -32,7 +32,12 @@ export default class CategoriesScreen extends React.Component {
 	async componentDidMount() {
 		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS category (categoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryTitle MEDIUMTEXT NOT NULL, categoryDescription LONGTEXT NOT NULL)", []);
 		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS subcategory (subCategoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryTitle TEXT NOT NULL, CONSTRAINT categoryID FOREIGN KEY (categoryID) REFERENCES category (categoryID) ON DELETE CASCADE ON UPDATE CASCADE)", []);
-		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS product (productID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryID INTEGER NOT NULL, productName TEXT NOT NULL, productHSN INTEGER NOT NULL, productGST TEXT NOT NULL, productRate FLOAT NOT NULL, CONSTRAINT subCategoryID FOREIGN KEY (subCategoryID) REFERENCES subcategory (subCategoryID) ON DELETE CASCADE ON UPDATE CASCADE)")
+		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS product (productID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, categoryID INTEGER NOT NULL, subCategoryID INTEGER NOT NULL, productName TEXT NOT NULL, productHSN INTEGER NOT NULL, productGST TEXT NOT NULL, productRate FLOAT NOT NULL, CONSTRAINT subCategoryID FOREIGN KEY (subCategoryID) REFERENCES subcategory (subCategoryID) ON DELETE CASCADE ON UPDATE CASCADE)", []);
+		
+		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS orderTemp (orderID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, productID INTEGER NOT NULL, orderhistoryID INTEGER NOT NULL )", [])
+		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS orderhistory (orderhistoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, status TEXT NOT NULL, date TEXT NOT NULL, checkoutDate TEXT NOT NULL, customer NO NULL)", []);
+		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS orders (orderID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, productName TEXT NOT NULL, productGST TEXT NOT NULL, productRate FLOAT NOT NULL, orderhistoryID INTEGER NOT NULL )", []);
+
 		this.getData();
 	}
 
@@ -57,7 +62,7 @@ export default class CategoriesScreen extends React.Component {
 				<View style={{ flex: 1 }} >
 
 					{/* Category FlatList */}
-					<View style={{ flex: 1, marginTop: 30 }} >
+					<View style={{ flex: 1 }} >
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Categories</Text>
 						{
 							!this.state.isLoading && this.state.allCategoriesData.length ? 

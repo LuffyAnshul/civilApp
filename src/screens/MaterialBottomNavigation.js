@@ -20,10 +20,14 @@ import EditCategoryScreen from './DrawerScreens/screens/editData/editCategory';
 import EditSubCategoryScreen from './DrawerScreens/screens/editData/editSubCategory';
 import EditProductScreen from './DrawerScreens/screens/editData/editProduct';
 
+// Import Orders Tab Screens
+import OrderScreen from './DrawerScreens/screens/OrderScreen';
+
 // Import Settings Screens
 import SettingsScreen from './DrawerScreens/screens/SettingsScreen';
 import HelpSupportScreen from './DrawerScreens/screens/HelpSupportScreen';
-import MyAccountScreen from './DrawerScreens/screens/MyAccountScreen';
+import MyAccountScreen from './DrawerScreens/screens/MyAccountScreen';4
+import HistoryScreen from './DrawerScreens/screens/HistoryScreen';
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -98,6 +102,24 @@ function ProductsTab () {
 	);
 }
 
+function OrdersTab() {
+	return(
+		<Stack.Navigator
+			initialRouteName="OrderScreen"
+			screenOptions={{
+				headerStyle: { backgroundColor: '#000' },
+				headerTintColor: '#fff',
+				headerTitleStyle: { fontWeight: 'bold' }
+			}}
+		>
+			<Stack.Screen
+				name="OrderScreen"
+				component={OrderScreen}
+				options={{ title: 'Order Screen' }}/>
+		</Stack.Navigator>
+	);
+}
+
 function SettingsTab () {
 	return (
 		<Stack.Navigator
@@ -116,6 +138,10 @@ function SettingsTab () {
 				name="MyAccountScreen"
 				component={MyAccountScreen}
 				options={{ title: 'My Account' }}/>
+			<Stack.Screen
+				name="HistoryScreen"
+				component={HistoryScreen}
+				options={{ title: 'My History' }}/>
 			<Stack.Screen
 				name="HelpSupportScreen"
 				component={HelpSupportScreen}
@@ -156,6 +182,20 @@ function MaterialBottomNavigation () {
 					tabBarIcon: ({ color }) => (
 						<MaterialIcons
 							name="add-business"
+							color={color}
+							size={26}
+						/>
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="OrdersTab"
+				component={OrdersTab}
+				options={{
+					tabBarLabel: 'Orders',
+					tabBarIcon: ({ color }) => (
+						<MaterialIcons
+							name="shopping-cart"
 							color={color}
 							size={26}
 						/>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, FlatList, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, FlatList, RefreshControl, TouchableOpacity, ScrollView } from 'react-native';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import { openDatabase } from 'react-native-sqlite-storage';
 
@@ -229,8 +229,7 @@ export default class ProductsScreen extends React.Component {
 				</View>
 				
 				{/* Products Render */}
-				<View>
-					<View>
+				<View  style={{ flex: 1 }} >
 						<View style={{ marginVertical: 20, alignItems: 'center' }} >
 							<View style={{ flexDirection: 'row' }} >
 								<Text style={{ alignSelf: 'flex-end', marginBottom: 2 }} >Category: </Text>
@@ -242,7 +241,7 @@ export default class ProductsScreen extends React.Component {
 							</View>
 						</View>
 						<Text style={{ fontSize: 25, fontWeight: 'bold', margin: 10, textDecorationLine: 'underline' }} >Products</Text>
-						{ !this.state.isLoading && this.state.allProductsData.length ? 
+						{ !this.state.isLoading && this.state.allProductsData.length ?
 							<FlatList 
 								data={this.state.allProductsData}
 								keyExtractor={(item) => item.productID.toString()}
@@ -270,7 +269,6 @@ export default class ProductsScreen extends React.Component {
 								</TouchableOpacity>
 							</View>
 						}
-					</View>
 				</View>
 			
 			</SafeAreaView>

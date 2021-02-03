@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class SettingsScreen extends React.Component {
@@ -7,8 +7,20 @@ export default class SettingsScreen extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			navigation: props.navigation
+			navigation: props.navigation,
+			userImage: null,
+			userName: null,
+			userMobile: null
 		}
+	}
+
+	async componentDidMount() {
+		await AsyncStorage.getItem('userName')
+			.then((value) => this.setState({ userName: value }));
+		await AsyncStorage.getItem('userMobile')
+			.then((value) => this.setState({ userMobile: value }));
+		await AsyncStorage.getItem('userImage')
+			.then((value) => this.setState({ userImage: value }));
 	}
 
 	render() {
@@ -19,12 +31,37 @@ export default class SettingsScreen extends React.Component {
 			<SafeAreaView style={{ flex: 1 }} >
 				<ScrollView contentContainerStyle={{ flex: 1, paddingVertical: 30 }} >
 
+					<View style={[styles.container, { alignItems: 'center' }]} >
+						{ this.state.userImage === '../../../assets/profile_defaults.png' || this.state.userImage === null  ?
+							<Image 
+								source={require('../../../assets/profile_defaults.png')} 
+								style={{ height: 70, width: 70 }}
+							/> : 
+							<Image 
+								source={{ uri: this.state.userImage }} 
+								style={{ height: 100, width: 100, borderRadius: 20 }}
+							/>
+						}
+						<View style={{ marginVertical: 20 }} >
+							<Text style={{ fontWeight: 'bold', fontSize: 20 }} >{this.state.userName}</Text>
+							<Text style={{ fontWeight: '200', fontSize: 16, textAlign: 'center' }} >+91- {this.state.userMobile}</Text>
+						</View>
+					</View>
+
 					<View style={styles.container} >
 						<TouchableOpacity 
 							style={styles.tile}
 							onPress={() => navigation.navigate('MyAccountScreen')} 
 						>
 							<Text style={styles.tileText} >My Account</Text>
+						</TouchableOpacity>
+					</View>
+					
+					<View style={styles.container} >
+						<TouchableOpacity 
+							style={styles.tile}
+							onPress={() => navigation.navigate('HistoryScreen')} >
+							<Text style={styles.tileText} >My History</Text>
 						</TouchableOpacity>
 					</View>
 
