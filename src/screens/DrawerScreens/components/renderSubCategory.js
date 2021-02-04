@@ -52,7 +52,6 @@ const renderSubCategory = (item, navigation) => {
 			[
 				{
 					text: "Cancel",
-					onPress: () => console.log("Cancel Pressed"),
 					style: "cancel"
 				},
 				{ 

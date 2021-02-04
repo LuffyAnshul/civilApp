@@ -25,7 +25,6 @@ function renderOrders (item) {
 			[
 				{
 					text: "Cancel",
-					onPress: () => console.log("Cancel Pressed"),
 					style: "cancel"
 				},
 				{ 
@@ -34,9 +33,7 @@ function renderOrders (item) {
 						await ExecuteQuery("DELETE FROM orderTemp WHERE productID = ?", [item.productID]);
 						let res = await ExecuteQuery("SELECT amount FROM orderAmount WHERE orderAmtID = 1")
 						let totalPrice = res.rows.item(0).amount;
-						console.log(totalPrice)
 						totalPrice = totalPrice - item.productRate;
-						console.log("Changed to - " + totalPrice);
 						await ExecuteQuery("UPDATE orderAmount SET amount = ? WHERE orderAmtID = 1", [totalPrice]);
 					}
 				}

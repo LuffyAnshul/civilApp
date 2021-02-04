@@ -14,7 +14,17 @@ export default class SettingsScreen extends React.Component {
 		}
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
+		this._focusListener = this.props.navigation.addListener('focus', () => {
+			this.getData();
+		});
+	}
+
+	componentWillUnmount() {
+		this._focusListener();
+	}
+
+	async getData () {
 		await AsyncStorage.getItem('userName')
 			.then((value) => this.setState({ userName: value }));
 		await AsyncStorage.getItem('userMobile')

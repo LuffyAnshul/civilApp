@@ -20,7 +20,17 @@ export default class MyAccountScreen extends React.Component {
 		}
 	}
 
-	componentDidMount = async() => {
+	componentDidMount (){
+		this._focusListener = this.props.navigation.addListener('focus', () => {
+			this.getData();
+		})	
+	}
+
+	componentWillUnmount() {
+		this._focusListener();
+	}
+
+	async getData () {
 		await AsyncStorage.getItem('userName')
 			.then((value) => this.setState({ userName: value }));
 		await AsyncStorage.getItem('userEmail')
@@ -39,7 +49,6 @@ export default class MyAccountScreen extends React.Component {
 			height: 400,
 			cropping: true,
 		}).then(image => {
-			// console.log(image);
 			this.setState({ userImage: image.path })
 		});
 

@@ -25,7 +25,6 @@ function renderCategory (item, navigation) {
 			[
 				{
 					text: "Cancel",
-					onPress: () => console.log("Cancel Pressed"),
 					style: "cancel"
 				},
 				{ 

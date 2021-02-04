@@ -83,7 +83,6 @@ export default class RegisterScreen extends Component {
 			height: 400,
 			cropping: true,
 		}).then(image => {
-			// console.log(image);
 			this.setState({ imageURI: image.path })
 		});
 

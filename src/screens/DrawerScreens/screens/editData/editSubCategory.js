@@ -38,7 +38,6 @@ export default class EditSubCategoryScreen extends React.Component {
 	async updateSubCategoryToDB (subCategoryID, subCategoryTitle) {
 		let res = await this.ExecuteQuery("UPDATE subcategory SET subCategoryTitle = ? WHERE subCategoryID = ?", [subCategoryTitle, subCategoryID]);
 
-		console.log(res);
 		if (res.rowsAffected > 0) {
 			return true;
 		}

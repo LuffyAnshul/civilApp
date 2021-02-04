@@ -67,7 +67,6 @@ export default class OrderScreen extends React.Component {
 			temp.push(val.rows.item(0));
 
 			let res = await this.ExecuteQuery("SELECT amount FROM orderAmount WHERE orderAmtID = 1")
-			console.log(res.rows.item(0))
 
 			let price = val.rows.item(0).productRate;
 			totalPrice = totalPrice + price;
