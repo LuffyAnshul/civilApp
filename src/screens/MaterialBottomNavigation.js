@@ -26,8 +26,9 @@ import OrderScreen from './DrawerScreens/screens/OrderScreen';
 // Import Settings Screens
 import SettingsScreen from './DrawerScreens/screens/SettingsScreen';
 import HelpSupportScreen from './DrawerScreens/screens/HelpSupportScreen';
-import MyAccountScreen from './DrawerScreens/screens/MyAccountScreen';4
+import MyAccountScreen from './DrawerScreens/screens/MyAccountScreen';
 import HistoryScreen from './DrawerScreens/screens/HistoryScreen';
+import HistoryDetailScreen from './DrawerScreens/screens/HistoryDetailScreen';
 
 const Stack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
@@ -146,6 +147,10 @@ function SettingsTab () {
 				name="HelpSupportScreen"
 				component={HelpSupportScreen}
 				options={{ title: 'Help & Support' }} />
+			<Stack.Screen
+				name="HistoryDetailScreen"
+				component={HistoryDetailScreen}
+				options={{ title: 'Order History Detail' }} />
 		</Stack.Navigator>
 	);
 }

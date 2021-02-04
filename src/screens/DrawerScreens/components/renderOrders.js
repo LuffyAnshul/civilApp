@@ -5,7 +5,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 
 const db = openDatabase({ name: 'SQLite.db', location: 'default', createFromLocation: '~SQLite.db' });
 
-function renderOrders (item, navigation) {
+function renderOrders (item) {
 	
 	const ExecuteQuery = (sql, params = []) => new Promise((resolve, reject) => {
 		db.transaction((trans) => {
@@ -32,6 +32,12 @@ function renderOrders (item, navigation) {
 					text: "OK", 
 					onPress: async() => {
 						await ExecuteQuery("DELETE FROM orderTemp WHERE productID = ?", [item.productID]);
+						let res = await ExecuteQuery("SELECT amount FROM orderAmount WHERE orderAmtID = 1")
+						let totalPrice = res.rows.item(0).amount;
+						console.log(totalPrice)
+						totalPrice = totalPrice - item.productRate;
+						console.log("Changed to - " + totalPrice);
+						await ExecuteQuery("UPDATE orderAmount SET amount = ? WHERE orderAmtID = 1", [totalPrice]);
 					}
 				}
 			],
@@ -41,7 +47,7 @@ function renderOrders (item, navigation) {
 
 	const RightActions = (progress, dragX) => {
 		const scale = dragX.interpolate({
-			inputRange: [-100, 0],
+			inputRange: [-100, 100],
 			outputRange: [1, 0],
 			extrapolate: 'clamp'
 		});

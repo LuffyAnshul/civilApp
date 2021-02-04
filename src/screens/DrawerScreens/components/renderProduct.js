@@ -39,7 +39,7 @@ const renderProduct = (item, navigation) => {
 			return alert('Product Already in Cart')
 		}
 
-		let res = await ExecuteQuery("INSERT INTO orderTemp (productID, orderhistoryID) VALUES (?, ?);", [item.productID, val])
+		await ExecuteQuery("INSERT INTO orderTemp (productID, orderhistoryID) VALUES (?, ?);", [item.productID, val])
 
 		return alert(`Product ${item.productName} Added To Cart`);
 	}

@@ -18,7 +18,8 @@ export default class OrderScreen extends React.Component {
 			orderhistoryID: null,
 			isLoading: true,
 			modalVisible: false,
-			customerName: ''
+			customerName: '',
+			totalPrice: 0,
 		}
 	}
 
@@ -34,34 +35,46 @@ export default class OrderScreen extends React.Component {
 	});
 
 	async componentDidMount() {
-		this.getOrderData();
+		this._focusListener = this.props.navigation.addListener('focus', () => {
+			this.getOrderData();
+		})
+	}
 
-		let res = await this.ExecuteQuery("SELECT * FROM orderhistory")
-		console.log("HISTORY")
-		console.log(res.rows.item(0))
-		console.log(res.rows.item(1))
-		console.log(res.rows.item(2))
-		console.log(res.rows.item(3))
-		console.log(res.rows.item(4))
+	componentWillUnmount() {
+		this._focusListener();
 	}
 
 	async getOrderData () {
-		let temp = []
-		
+		let temp = [];
+		let { totalPrice } = this.state;
+
 		let selectQuery = await this.ExecuteQuery("SELECT * FROM orderTemp", []);
+		let selectAmtQuery = await this.ExecuteQuery("SELECT * FROM orderAmount", []);
 
 		if (selectQuery.rows.length === 0) {
-			return this.setState({ allOrderData: temp, isLoading: false });
+			return this.setState({ allOrderData: temp, isLoading: false, totalPrice: 0 });
 		}
-
+		if (selectAmtQuery.rows.length === 0) {
+			await this.ExecuteQuery("INSERT INTO orderAmount (amount) VALUES (?)", [0]);
+		}
+		totalPrice = 0
 		this.setState({ allOrderData: temp, isLoading: true, orderhistoryID: selectQuery.rows.item(0).orderhistoryID })
+		
 		for (let i = 0; i < selectQuery.rows.length; ++i){
 			let productID = selectQuery.rows.item(i).productID;
 
 			let val = await this.ExecuteQuery("SELECT * FROM product WHERE productID = ?", [productID]);
-			temp.push(val.rows.item(0))
+			temp.push(val.rows.item(0));
+
+			let res = await this.ExecuteQuery("SELECT amount FROM orderAmount WHERE orderAmtID = 1")
+			console.log(res.rows.item(0))
+
+			let price = val.rows.item(0).productRate;
+			totalPrice = totalPrice + price;
+			await this.ExecuteQuery("UPDATE orderAmount SET amount = ? WHERE orderAmtID = 1", [totalPrice]);
+
 		}
-		return this.setState({ allOrderData: temp, isLoading: false })
+		return this.setState({ allOrderData: temp, isLoading: false, totalPrice })
 	}
 
 	async uploadDataToOrdersDB () {
@@ -83,22 +96,22 @@ export default class OrderScreen extends React.Component {
 		var dd = today.getDate();
 		var mm = today.getMonth()+1; 
 		var yyyy = today.getFullYear();
-		today = mm+'/'+dd+'/'+yyyy;
+		today = dd+'/'+mm+'/'+yyyy;
 
-		let res = await this.ExecuteQuery("UPDATE orderhistory SET status = ?, checkoutDate = ?, customer = ? WHERE orderhistoryID = ? ", ["completed", today, customerName, orderhistoryID]);
-		console.log(res)
+		await this.ExecuteQuery("UPDATE orderhistory SET status = ?, checkoutDate = ?, customer = ? WHERE orderhistoryID = ? ", ["completed", today, customerName, orderhistoryID]);
 		await this.ExecuteQuery("DELETE FROM orderTemp", []);
+		await this.ExecuteQuery("DELETE FROM orderAmount", []);
 		this.getOrderData();
 	}
 
 	render() {
 
-		let { navigation, modalVisible } = this.state;
+		let { modalVisible, totalPrice } = this.state;
 
 		return (
 			<SafeAreaView style={{ flex: 1 }}>
 				<View style={{ flex: 1 }} >
-				<Modal
+					<Modal
 					animationType="slide"
 					transparent={true}
 					visible={modalVisible}
@@ -106,34 +119,33 @@ export default class OrderScreen extends React.Component {
 						Alert.alert("Modal has been closed.");
 					}}
 					>
-						<View style={styles.centeredView}>
-							<View style={styles.modalView}>
-								<Text style={styles.modalText}>Enter Customer Name</Text>
+					<View style={styles.centeredView}>
+						<View style={styles.modalView}>
+							<Text style={styles.modalText}>Enter Customer Name</Text>
 
-								<TextInput
-									mode="outlined"
-									label="Customer Name"
-									placeholder="Customer Name" 
-									returnKeyType="done"
-									value={this.state.customerName}
-									onChangeText={ (customerName) => this.setState({ customerName })}
-									style={styles.inputStyles}
-								/>
+							<TextInput
+								mode="outlined"
+								label="Customer Name"
+								placeholder="Customer Name" 
+								returnKeyType="done"
+								value={this.state.customerName}
+								onChangeText={ (customerName) => this.setState({ customerName })}
+								style={styles.inputStyles}
+							/>
 
-								<TouchableHighlight
-									style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-									onPress={() => {
-										this.uploadDataToHistoryDB();
-										this.setState({ modalVisible: !modalVisible });
-										this.getOrderData();
-									}}
-								>
-									<Text style={styles.textStyle}>Submit</Text>
-								</TouchableHighlight>
-								</View>
-						</View>
-					</Modal>
-
+							<TouchableHighlight
+								style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+								onPress={() => {
+									this.uploadDataToHistoryDB();
+									this.setState({ modalVisible: !modalVisible });
+									this.getOrderData();
+								}}
+							>
+								<Text style={styles.textStyle}>Submit</Text>
+							</TouchableHighlight>
+							</View>
+					</View>
+				</Modal>
 
 					{/* Orders FlatList */}
 					<View style={{ marginTop: 30 }} >
@@ -143,7 +155,7 @@ export default class OrderScreen extends React.Component {
 							<FlatList 
 								data={this.state.allOrderData}
 								keyExtractor={(item) => item.productID.toString()}
-								renderItem={({ item }) => renderOrders(item, navigation)}
+								renderItem={({ item }) => renderOrders(item)}
 								ItemSeparatorComponent={() => 
 									<View style={{ marginVertical: 5 }}  />
 								}
@@ -167,6 +179,12 @@ export default class OrderScreen extends React.Component {
 					<View style={{ position: 'absolute', right: 5, bottom: 10 }} >
 						<TouchableOpacity onPress={() => this.uploadDataToOrdersDB()} >
 							<Text style={styles.checkoutBtn}>CheckOut</Text>
+						</TouchableOpacity>
+					</View>
+
+					<View style={{ position: 'absolute', left: 5, bottom: 10 }} >
+						<TouchableOpacity>
+							<Text style={styles.checkoutBtn}>Total Price: ₹ {totalPrice}</Text>
 						</TouchableOpacity>
 					</View>
 				</View>

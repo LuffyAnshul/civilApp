@@ -37,6 +37,7 @@ export default class CategoriesScreen extends React.Component {
 		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS orderTemp (orderID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, productID INTEGER NOT NULL, orderhistoryID INTEGER NOT NULL )", [])
 		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS orderhistory (orderhistoryID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, status TEXT NOT NULL, date TEXT NOT NULL, checkoutDate TEXT NOT NULL, customer NO NULL)", []);
 		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS orders (orderID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, productName TEXT NOT NULL, productGST TEXT NOT NULL, productRate FLOAT NOT NULL, orderhistoryID INTEGER NOT NULL )", []);
+		await this.ExecuteQuery("CREATE TABLE IF NOT EXISTS orderAmount (orderAmtID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, amount FLOAT NOT NULL)")
 
 		this.getData();
 	}
